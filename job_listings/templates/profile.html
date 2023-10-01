@@ -1,0 +1,12 @@
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
+<h3>Saved Jobs</h3>
+<ul>
+  {% for savedjob in savedjobs %}
+  <li>
+    <a href="{{ savedjob.link }}" target="_blank">{{ savedjob.title }}</a>
+  </li>
+  {% endfor %}
+</ul>

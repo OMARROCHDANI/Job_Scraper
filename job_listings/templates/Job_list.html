@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>THIS IS THE JOB LISTING PAGE</h1>
+    <form method="POST" action="{% url 'workbench' %}">
+      {% csrf_token %}
+      <input
+        type="text"
+        name="input_profession"
+        placeholder="Enter Profession"
+      />
+
+      <label>
+        <input type="radio" name="search_option" value="manual" checked />
+        Manual Search
+      </label>
+
+      <label>
+        <input type="radio" name="search_option" value="profile" /> Search from
+        Profile
+      </label>
+
+      <input type="submit" value="Search" />
+    </form>
+    {% if items_indeed or items_simplyhired or items_timesjobs %} {% if
+    items_indeed %}
+    <h2>indeed</h2>
+    <ul>
+      {% for title, link in items_indeed %}
+      <li>
+        <a href="{{ link }}" target="_blank">{{ title }}</a>
+        <form
+          method="POST"
+          action="{% url 'save_job' job_id=forloop.counter0 %}"
+        >
+          {% csrf_token %}
+          <input
+            type="hidden"
+            name="title_{{ forloop.counter0 }}"
+            value="{{ title }}"
+          />
+          <input
+            type="hidden"
+            name="link_{{ forloop.counter0 }}"
+            value="{{ link }}"
+          />
+          <button type="submit">Save Job</button>
+        </form>
+      </li>
+
+      {% endfor %}
+    </ul>
+    {% endif %} {% if items_simplyhired %}
+    <h2>simplyhired</h2>
+    <ul>
+      {% for title, link in items_simplyhired %}
+      <li>
+        <a href="{{ link }}" target="_blank">{{ title }}</a>
+        <form
+          method="POST"
+          action="{% url 'save_job' job_id=forloop.counter0 %}"
+        >
+          {% csrf_token %}
+          <input
+            type="hidden"
+            name="title_{{ forloop.counter0 }}"
+            value="{{ title }}"
+          />
+          <input
+            type="hidden"
+            name="link_{{ forloop.counter0 }}"
+            value="{{ link }}"
+          />
+          <button type="submit">Save Job</button>
+        </form>
+      </li>
+
+      {% empty %}
+      <li>No titles found.</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% if items_timesjobs %}
+    <h2>timesjobs</h2>
+    <ul>
+      {% for title, link in items_timesjobs %}
+      <li>
+        <a href="{{ link }}" target="_blank">{{ title }}</a>
+        <form
+          method="POST"
+          action="{% url 'save_job' job_id=forloop.counter0 %}"
+        >
+          {% csrf_token %}
+          <input
+            type="hidden"
+            name="title_{{ forloop.counter0 }}"
+            value="{{ title }}"
+          />
+          <input
+            type="hidden"
+            name="link_{{ forloop.counter0 }}"
+            value="{{ link }}"
+          />
+          <button type="submit">Save Job</button>
+        </form>
+      </li>
+
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <p>Loading...</p>
+  </body>
+</html>
