@@ -2,11 +2,18 @@
   {% csrf_token %} {{ form.as_p }}
   <button type="submit">Save</button>
 </form>
+
 <h3>Saved Jobs</h3>
 <ul>
   {% for savedjob in savedjobs %}
   <li>
     <a href="{{ savedjob.link }}" target="_blank">{{ savedjob.title }}</a>
+    <!-- Add a form for deleting the saved job -->
+    <form method="post" action="{% url 'profile_create' %}">
+      {% csrf_token %}
+      <input type="hidden" name="delete_saved_job" value="{{ savedjob.id }}" />
+      <button type="submit">Delete</button>
+    </form>
   </li>
   {% endfor %}
 </ul>
