@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'workbench',
     'authentication',
     'user_profile',
+    'scraping_logic'
 ]
 
 MIDDLEWARE = [

@@ -16,16 +16,16 @@ from user_profile.models import Profile
 from django.core.cache import cache
 from user_profile.models import SavedJob
 
+from scraping_logic.indeed import scrape_indeed
+from scraping_logic.simplyhired import scrape_simplyhired
+from scraping_logic.timesjobs import scrape_timesjobs
+
+
 # Create your views here.
 def workbench(request):
     user = request.user
     profile = Profile.objects.get(user=user)
     if request.method == 'POST':
-        links_indeed = []
-        titles_simplyhired = []
-        links_simplyhired = []
-        titles_timesjobs = []
-        links_timesjobs = []
         search_option = request.POST.get('search_option')
         if search_option == 'manual':
             myprofession = request.POST.get('input_profession')
@@ -33,32 +33,9 @@ def workbench(request):
             myprofession = profile.profession    
         cached_job_data = cache.get(f'cached_job_data_{user.id}_{myprofession}')
         if cached_job_data is None:
-            driver = webdriver.Chrome()
-            # Naviguer vers une page web :
-            driver.get(f"https://www.indeed.com/jobs?q={myprofession}")
-            # Find all the job titles on the page
-            jobs_indeed = driver.find_elements(By.CLASS_NAME, "jobTitle.css-1h4a4n5.eu4oa1w0")
-            titles_indeed = [title.text.strip() for title in jobs_indeed]
-            for job in jobs_indeed:
-                a_tag=job.find_element(By.TAG_NAME, "a")
-                links_indeed.append(a_tag.get_attribute("href"))
-            items_indeed=zip(titles_indeed, links_indeed)
-            # Extract and print the job titles
-            driver.get(f"https://www.simplyhired.com/jobs?q={myprofession}")
-            # Find all the job titles on the page
-            jobs_simplyhired = driver.find_elements(By.CLASS_NAME, "chakra-text.css-8rdtm5")
-            titles_simplyhired = [title.text.strip() for title in jobs_simplyhired]    
-            for job in jobs_simplyhired:
-                a_tag=job.find_element(By.TAG_NAME, "a")
-                links_simplyhired.append(a_tag.get_attribute("href"))
-            items_simplyhired=zip(titles_simplyhired, links_simplyhired)
-            html_text = requests.get(f'https://www.timesjobs.com/candidate/job-search.html?searchType=personalizedSearch&from=submit&txtKeywords={myprofession}&txtLocation=').text
-            soup = BeautifulSoup(html_text , 'lxml')
-            jobs_timesjobs = soup.find_all('li', class_ = 'clearfix job-bx wht-shd-bx')
-            for job in jobs_timesjobs :
-                titles_timesjobs.append(job.a.text.replace('\n',''))
-                links_timesjobs.append(job.a['href'])
-            items_timesjobs = zip(titles_timesjobs, links_timesjobs)
+            items_indeed = scrape_indeed(myprofession, 3)
+            items_simplyhired = scrape_simplyhired(myprofession, 3)
+            items_timesjobs = scrape_timesjobs(myprofession)
             cache.set(f'cached_job_data_{user.id}_{myprofession}', {
                 'items_indeed': items_indeed,
                 'items_simplyhired': items_simplyhired,
