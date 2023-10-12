@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      body {
+        background-color: #1e1e1e; /* Dark background color */
+        color: #ffffff; /* Light text color */
+      }
+    </style>
   </head>
   <body>
     <h1>THIS IS THE JOB LISTING PAGE</h1>
@@ -27,11 +33,10 @@
 
       <input type="submit" value="Search" />
     </form>
-    {% if items_indeed or items_simplyhired or items_timesjobs %} {% if
-    items_indeed %}
-    <h2>indeed</h2>
+
+    <!-- Indeed -->
     <ul>
-      {% for title, link in items_indeed %}
+      {% for title, link in paginated_items_indeed %}
       <li>
         <a href="{{ link }}" target="_blank">{{ title }}</a>
         <form
@@ -39,26 +44,17 @@
           action="{% url 'save_job' job_id=forloop.counter0 %}"
         >
           {% csrf_token %}
-          <input
-            type="hidden"
-            name="title_{{ forloop.counter0 }}"
-            value="{{ title }}"
-          />
-          <input
-            type="hidden"
-            name="link_{{ forloop.counter0 }}"
-            value="{{ link }}"
-          />
+          <input type="hidden" name="title" value="{{ title }}" />
+          <input type="hidden" name="link" value="{{ link }}" />
           <button type="submit">Save Job</button>
         </form>
       </li>
-
       {% endfor %}
     </ul>
-    {% endif %} {% if items_simplyhired %}
-    <h2>simplyhired</h2>
+
+    <!-- SimplyHired -->
     <ul>
-      {% for title, link in items_simplyhired %}
+      {% for title, link in paginated_items_simplyhired %}
       <li>
         <a href="{{ link }}" target="_blank">{{ title }}</a>
         <form
@@ -66,28 +62,17 @@
           action="{% url 'save_job' job_id=forloop.counter0 %}"
         >
           {% csrf_token %}
-          <input
-            type="hidden"
-            name="title_{{ forloop.counter0 }}"
-            value="{{ title }}"
-          />
-          <input
-            type="hidden"
-            name="link_{{ forloop.counter0 }}"
-            value="{{ link }}"
-          />
+          <input type="hidden" name="title" value="{{ title }}" />
+          <input type="hidden" name="link" value="{{ link }}" />
           <button type="submit">Save Job</button>
         </form>
       </li>
-
-      {% empty %}
-      <li>No titles found.</li>
       {% endfor %}
     </ul>
-    {% endif %} {% if items_timesjobs %}
-    <h2>timesjobs</h2>
+
+    <!-- TimesJobs -->
     <ul>
-      {% for title, link in items_timesjobs %}
+      {% for title, link in paginated_items_timesjobs %}
       <li>
         <a href="{{ link }}" target="_blank">{{ title }}</a>
         <form
@@ -95,23 +80,34 @@
           action="{% url 'save_job' job_id=forloop.counter0 %}"
         >
           {% csrf_token %}
-          <input
-            type="hidden"
-            name="title_{{ forloop.counter0 }}"
-            value="{{ title }}"
-          />
-          <input
-            type="hidden"
-            name="link_{{ forloop.counter0 }}"
-            value="{{ link }}"
-          />
+          <input type="hidden" name="title" value="{{ title }}" />
+          <input type="hidden" name="link" value="{{ link }}" />
           <button type="submit">Save Job</button>
         </form>
       </li>
-
       {% endfor %}
     </ul>
-    {% endif %}
+
     <p>Loading...</p>
+    <div class="pagination">
+      <span class="step-links">
+        {% if paginated_items_indeed.has_previous %}
+        <a href="?page={{ paginated_items_indeed.previous_page_number }}"
+          >previous</a
+        >
+        {% endif %}
+
+        <span class="current"
+          >Page {{ paginated_items_indeed.number }} of {{
+          paginator_indeed.num_pages }}.</span
+        >
+
+        {% if paginated_items_indeed.has_next %}
+        <a href="?page={{ paginated_items_indeed.next_page_number }}">next</a>
+        {% endif %}
+      </span>
+    </div>
+
+    <!-- Similar pagination blocks for SimplyHired and TimesJobs -->
   </body>
 </html>
