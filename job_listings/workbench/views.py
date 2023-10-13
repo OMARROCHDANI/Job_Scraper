@@ -32,21 +32,27 @@ def workbench(request):
     profile = Profile.objects.get(user=user)
     # Check if the data is already scraped
     if 'scraped_items' not in request.session:
-        search_option = request.POST.get('search_option')
-        myprofession = None  # Set a default value in case neither 'manual' nor 'profile' is selected
-        if search_option == 'manual':
-            myprofession = request.POST.get('input_profession')
-        elif search_option == 'profile':
-            myprofession = profile.profession
-        items_indeed = scrape_indeed(myprofession, 3)
-        # Store the scraped data in the session
-        request.session['scraped_items'] = items_indeed
+        if request.method == 'POST':
+            search_option = request.POST.get('search_option')
+            if search_option == 'manual':
+                myprofession = request.POST.get('input_profession')
+            elif search_option == 'profile':
+                myprofession = profile.profession
+            items_indeed = scrape_indeed(myprofession, 3)
+            # Store the scraped data in the session
+            request.session['scraped_items'] = items_indeed
     else:
+        if request.method == 'POST':
+            search_option = request.POST.get('search_option')
+            if search_option == 'manual':
+                myprofession = request.POST.get('input_profession')
+            elif search_option == 'profile':
+                myprofession = profile.profession
+            items_indeed = scrape_indeed(myprofession, 3)
+            # Store the scraped data in the session
+            request.session['scraped_items'] = items_indeed
         # Use the stored data from the session
         items_indeed = request.session['scraped_items']
-
-
-
         paginator = Paginator(items_indeed, 15)  # Show 10 items per page
         page_number = request.GET.get('page', 1)
         try:
