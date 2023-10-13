@@ -24,7 +24,19 @@ SECRET_KEY = 'django-insecure-^@k&m!k@j-uz8m=v@%kej5_3&a6te$38u3dvt4k-lvjk(nszi3
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # Set the desired level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    },
+}
 ALLOWED_HOSTS = []
 
 
@@ -51,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'job_listings.urls'

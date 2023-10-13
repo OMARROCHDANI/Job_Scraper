@@ -22,38 +22,50 @@ from scraping_logic.timesjobs import scrape_timesjobs
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+import logging
+
 
 # Create your views here.
 def workbench(request):
+    logger = logging.getLogger(__name__)
     user = request.user
     profile = Profile.objects.get(user=user)
-    if request.method == 'POST':
+    # Check if the data is already scraped
+    if 'scraped_items' not in request.session:
         search_option = request.POST.get('search_option')
+        myprofession = None  # Set a default value in case neither 'manual' nor 'profile' is selected
         if search_option == 'manual':
             myprofession = request.POST.get('input_profession')
-        if search_option == 'profile':
-            myprofession = profile.profession   
+        elif search_option == 'profile':
+            myprofession = profile.profession
         items_indeed = scrape_indeed(myprofession, 3)
-        items_simplyhired = scrape_simplyhired(myprofession, 3)
-        items_timesjobs = scrape_timesjobs(myprofession)
-        combined_items = list(zip(items_indeed, items_simplyhired, items_timesjobs))
-        paginator = Paginator(combined_items, 15)  # Show 10 items per page
+        # Store the scraped data in the session
+        request.session['scraped_items'] = items_indeed
+    else:
+        # Use the stored data from the session
+        items_indeed = request.session['scraped_items']
+
+
+
+        paginator = Paginator(items_indeed, 15)  # Show 10 items per page
         page_number = request.GET.get('page', 1)
         try:
             paginated_items = paginator.page(page_number)
+            logger.debug(f"Paginated items: {paginated_items}")
         except PageNotAnInteger:
             # If page is not an integer, deliver first page.
             paginated_items = paginator.page(1)
         except EmptyPage:
             # If page is out of range (e.g., 9999), deliver last page of results.
             paginated_items = paginator.page(paginator.num_pages)
-
         context = {
             'paginated_items': paginated_items,
             'paginator': paginator,
         }
-        return render(request , 'job_list_demo.html',context )
-    return render(request, 'job_list_demo.html')
+        return render(request, 'job_list.html', context)
+
+    return render(request, 'job_list.html')
+
 
 
 @login_required
@@ -76,31 +88,3 @@ def save_job(request, job_id):
 
 
 
-def scrape_demo(request):
-    # Check if the data is already in the session
-    if 'scraped_items' in request.session:
-        items_indeed = request.session['scraped_items']
-    else:
-        # If not, scrape the data and store it in the session
-        items_indeed = scrape_indeed('computer_science', 3)
-        request.session['scraped_items'] = items_indeed
-
-    # Set a default page and handle non-integer cases
-    page = request.GET.get('page', 1)
-    try:
-        page = int(page)
-    except ValueError:
-        page = 1
-
-    paginator = Paginator(items_indeed, 10)
-    
-    try:
-        paginated_items = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        paginated_items = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g., 9999), deliver last page of results.
-        paginated_items = paginator.page(paginator.num_pages)
-
-    return render(request, 'scrape_demo.html', {'paginated_items': paginated_items})

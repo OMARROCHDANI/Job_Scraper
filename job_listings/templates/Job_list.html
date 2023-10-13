@@ -13,7 +13,7 @@
   </head>
   <body>
     <h1>THIS IS THE JOB LISTING PAGE</h1>
-    <form method="POST" action="{% url 'workbench' %}">
+    <form method="post" action="{% url 'workbench' %}">
       {% csrf_token %}
       <input
         type="text"
@@ -34,9 +34,8 @@
       <input type="submit" value="Search" />
     </form>
 
-    <!-- Indeed -->
     <ul>
-      {% for title, link in paginated_items_indeed %}
+      {% for title, link in paginated_items %}
       <li>
         <a href="{{ link }}" target="_blank">{{ title }}</a>
         <form
@@ -44,70 +43,38 @@
           action="{% url 'save_job' job_id=forloop.counter0 %}"
         >
           {% csrf_token %}
-          <input type="hidden" name="title" value="{{ title }}" />
-          <input type="hidden" name="link" value="{{ link }}" />
+          <input
+            type="hidden"
+            name="title_{{ forloop.parentloop.counter0 }}"
+            value="{{ title }}"
+          />
+          <input
+            type="hidden"
+            name="link_{{ forloop.parentloop.counter0 }}"
+            value="{{ link }}"
+          />
           <button type="submit">Save Job</button>
         </form>
       </li>
       {% endfor %}
     </ul>
-
-    <!-- SimplyHired -->
-    <ul>
-      {% for title, link in paginated_items_simplyhired %}
-      <li>
-        <a href="{{ link }}" target="_blank">{{ title }}</a>
-        <form
-          method="POST"
-          action="{% url 'save_job' job_id=forloop.counter0 %}"
-        >
-          {% csrf_token %}
-          <input type="hidden" name="title" value="{{ title }}" />
-          <input type="hidden" name="link" value="{{ link }}" />
-          <button type="submit">Save Job</button>
-        </form>
-      </li>
-      {% endfor %}
-    </ul>
-
-    <!-- TimesJobs -->
-    <ul>
-      {% for title, link in paginated_items_timesjobs %}
-      <li>
-        <a href="{{ link }}" target="_blank">{{ title }}</a>
-        <form
-          method="POST"
-          action="{% url 'save_job' job_id=forloop.counter0 %}"
-        >
-          {% csrf_token %}
-          <input type="hidden" name="title" value="{{ title }}" />
-          <input type="hidden" name="link" value="{{ link }}" />
-          <button type="submit">Save Job</button>
-        </form>
-      </li>
-      {% endfor %}
-    </ul>
-
     <p>Loading...</p>
     <div class="pagination">
       <span class="step-links">
-        {% if paginated_items_indeed.has_previous %}
-        <a href="?page={{ paginated_items_indeed.previous_page_number }}"
-          >previous</a
-        >
+        {% if paginated_items.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ paginated_items.previous_page_number }}">previous</a>
         {% endif %}
 
-        <span class="current"
-          >Page {{ paginated_items_indeed.number }} of {{
-          paginator_indeed.num_pages }}.</span
-        >
+        <span class="current">
+          Page {{ paginated_items.number }} of {{ paginator.num_pages }}.
+        </span>
 
-        {% if paginated_items_indeed.has_next %}
-        <a href="?page={{ paginated_items_indeed.next_page_number }}">next</a>
+        {% if paginated_items.has_next %}
+        <a href="?page={{ paginated_items.next_page_number }}">next</a>
+        <a href="?page={{ paginator.num_pages }}">last &raquo;</a>
         {% endif %}
       </span>
     </div>
-
-    <!-- Similar pagination blocks for SimplyHired and TimesJobs -->
   </body>
 </html>

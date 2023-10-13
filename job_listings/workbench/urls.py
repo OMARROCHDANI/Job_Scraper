@@ -5,7 +5,7 @@ urlpatterns = [
     
     path('',views.workbench, name='workbench'),
     path('save_job/<int:job_id>/', views.save_job, name='save_job'),
-    path('demo', views.scrape_demo, name='scrape_demo')
+ 
 
 
 
