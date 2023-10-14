@@ -33,9 +33,9 @@
 
       <input type="submit" value="Search" />
     </form>
-
+    {% for tuple in paginated_items %}
     <ul>
-      {% for title, link in paginated_items %}
+      {% for title, link in tuple %}
       <li>
         <a href="{{ link }}" target="_blank">{{ title }}</a>
         <form
@@ -58,6 +58,7 @@
       </li>
       {% endfor %}
     </ul>
+    {% endfor %}
     <p>Loading...</p>
     <div class="pagination">
       <span class="step-links">

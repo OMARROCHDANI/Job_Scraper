@@ -27,11 +27,10 @@ import logging
 
 # Create your views here.
 def workbench(request):
-    logger = logging.getLogger(__name__)
     user = request.user
     profile = Profile.objects.get(user=user)
     # Check if the data is already scraped
-    if 'scraped_items' not in request.session:
+    if 'scraped_items_indeed' not in request.session and 'scraped_items_simplyhired' not in request.session and 'scraped_items_timesjobs' not in request.session:
         if request.method == 'POST':
             search_option = request.POST.get('search_option')
             if search_option == 'manual':
@@ -39,8 +38,12 @@ def workbench(request):
             elif search_option == 'profile':
                 myprofession = profile.profession
             items_indeed = scrape_indeed(myprofession, 3)
+            items_simplyhired = scrape_simplyhired(myprofession, 3)
+            items_timesjobs = scrape_timesjobs(myprofession)
             # Store the scraped data in the session
-            request.session['scraped_items'] = items_indeed
+            request.session['scraped_items_indeed'] = items_indeed
+            request.session['scraped_items_simplyhired'] = items_simplyhired
+            request.session['scraped_items_timesjobs'] = items_timesjobs
     else:
         if request.method == 'POST':
             search_option = request.POST.get('search_option')
@@ -49,15 +52,21 @@ def workbench(request):
             elif search_option == 'profile':
                 myprofession = profile.profession
             items_indeed = scrape_indeed(myprofession, 3)
+            items_simplyhired = scrape_simplyhired(myprofession, 3)
+            items_timesjobs = scrape_timesjobs(myprofession)
             # Store the scraped data in the session
-            request.session['scraped_items'] = items_indeed
+            request.session['scraped_items_indeed'] = items_indeed
+            request.session['scraped_items_simplyhired'] = items_simplyhired
+            request.session['scraped_items_timesjobs'] = items_timesjobs
         # Use the stored data from the session
-        items_indeed = request.session['scraped_items']
-        paginator = Paginator(items_indeed, 15)  # Show 10 items per page
+        items_indeed = request.session['scraped_items_indeed']
+        items_simplyhired = request.session['scraped_items_simplyhired']
+        items_timesjobs = request.session['scraped_items_timesjobs']
+        combined_items = list(zip(items_indeed, items_simplyhired, items_timesjobs))
+        paginator = Paginator(combined_items, 15)  # Show 10 items per page
         page_number = request.GET.get('page', 1)
         try:
             paginated_items = paginator.page(page_number)
-            logger.debug(f"Paginated items: {paginated_items}")
         except PageNotAnInteger:
             # If page is not an integer, deliver first page.
             paginated_items = paginator.page(1)
