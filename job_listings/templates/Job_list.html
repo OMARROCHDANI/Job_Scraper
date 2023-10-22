@@ -35,9 +35,10 @@
     </form>
     {% for tuple in paginated_items %}
     <ul>
-      {% for title, link in tuple %}
+      {% for title, link, payment in tuple %}
       <li>
         <a href="{{ link }}" target="_blank">{{ title }}</a>
+        <p>{{ payment }}</p>
         <form
           method="POST"
           action="{% url 'save_job' job_id=forloop.counter0 %}"

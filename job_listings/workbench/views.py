@@ -37,8 +37,8 @@ def workbench(request):
                 myprofession = request.POST.get('input_profession')
             elif search_option == 'profile':
                 myprofession = profile.profession
-            items_indeed = scrape_indeed(myprofession, 3)
-            items_simplyhired = scrape_simplyhired(myprofession, 3)
+            items_indeed = scrape_indeed(myprofession, 1)
+            items_simplyhired = scrape_simplyhired(myprofession, 1)
             items_timesjobs = scrape_timesjobs(myprofession)
             # Store the scraped data in the session
             request.session['scraped_items_indeed'] = items_indeed
@@ -62,7 +62,7 @@ def workbench(request):
         items_indeed = request.session['scraped_items_indeed']
         items_simplyhired = request.session['scraped_items_simplyhired']
         items_timesjobs = request.session['scraped_items_timesjobs']
-        combined_items = list(zip(items_indeed, items_simplyhired, items_timesjobs))
+        combined_items = list(zip(items_indeed, items_simplyhired))
         paginator = Paginator(combined_items, 15)  # Show 10 items per page
         page_number = request.GET.get('page', 1)
         try:
