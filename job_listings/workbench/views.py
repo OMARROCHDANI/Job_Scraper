@@ -77,9 +77,9 @@ def workbench(request):
             'paginated_items': paginated_items,
             'paginator': paginator,
         }
-        return render(request, 'job_list.html', context)
+        return render(request, 'authenticationindex.html', context)
 
-    return render(request, 'job_list.html')
+    return render(request, 'authenticationindex.html')
 
 
 
