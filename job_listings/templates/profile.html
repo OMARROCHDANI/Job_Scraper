@@ -1,39 +1,150 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-js" lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        background-color: #1e1e1e; /* Dark background color */
-        color: #ffffff; /* Light text color */
-      }
-    </style>
-  </head>
-  <body>
-    <form method="POST">
-      {% csrf_token %} {{ form.as_p }}
-      <button type="submit">Save</button>
-    </form>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Jober Desk | Responsive Job Portal Template</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <h3>Saved Jobs</h3>
-    <ul>
-      {% for savedjob in savedjobs %}
-      <li>
-        <a href="{{ savedjob.link }}" target="_blank">{{ savedjob.title }}</a>
-        <!-- Add a form for deleting the saved job -->
-        <form method="post" action="{% url 'profile_create' %}">
-          {% csrf_token %}
-          <input
-            type="hidden"
-            name="delete_saved_job"
-            value="{{ savedjob.id }}"
-          />
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-      {% endfor %}
-    </ul>
+    <!-- All Plugin Css -->
+    <link rel="stylesheet" href={% static 'css/plugins.css' %} />
+
+    <!-- Style & Common Css -->
+    <link rel="stylesheet" href={% static 'css/common.css' %} />
+    <link rel="stylesheet" href={% static 'css/main.css' %} />
+  </head>
+
+  <body>
+    {% for message in messages %}
+    <div
+      class="alert alert-{{ message.tags }} alert-dismissible fade show "
+      role="alert"
+    >
+      <strong>Message:</strong> {{message}}
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span arial-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+    <!-- Navigation Start  -->
+    <nav class="navbar navbar-default navbar-sticky bootsnav">
+        <div class="container">
+          <!-- Start Header Navigation -->
+          <div class="navbar-header">
+            <button
+              type="button"
+              class="navbar-toggle"
+              data-toggle="collapse"
+              data-target="#navbar-menu"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="index.html"
+              ><img src={% static "img/logo.png" %} class="logo" alt=""
+            /></a>
+          </div>
+          <!-- End Header Navigation -->
+          
+          
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul
+              class="nav navbar-nav navbar-right"
+              data-in="fadeInDown"
+              data-out="fadeOutUp"
+            >{% if request.user.is_authenticated %}
+            {% if user.is_superuser %}
+            <li><a href="http://127.0.0.1:8000/admin/">Admin dashboard</a></li>
+            {% endif %}
+              <li><a href="/authentication/authenticationindex/">Home</a></li>
+              <li><a href="/user_profile/">Profile</a></li>
+              
+              <li><a href="/authentication/signout/">Signout</a></li>
+              {% else %}
+              <li><a href="/authentication/signup/">Signup</a></li>
+              <li><a href="/authentication/signin/">Signin</a></li>
+              
+            </ul>
+            
+          </div>
+          
+          <!-- /.navbar-collapse -->
+        </div>
+        {% endif %}
+      </nav>
+    <!-- Navigation End  -->
+
+    <!-- login section start -->
+
+      
+        
+    <form method="POST">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit">Save</button>
+      </form>
+        
+   
+   
+    <!-- job start -->
+
+
+    <section class="jobs">
+        <div class="container">
+          <div class="row heading">
+            <h2>Saved jobs</h2>
+          </div>
+          {% for savedjob in savedjobs %}
+          <div class="companies">
+            <div class="company-list">
+              <div class="row">
+                <div class="col-md-2 col-sm-2">
+                  <div class="company-logo">
+                    <img src="img/google.png" class="img-responsive" alt="" />
+                  </div>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                  <div class="company-content">
+                    <h3><a href="{{ savedjob.link }}" target="_blank">{{ savedjob.title }}</a></h3>
+                    <p><span class="package"><i class="fa fa-money"></i>?</span></p>
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                    <form method="post" action="{% url 'profile_create' %}">
+                        {% csrf_token %}
+                        <input
+                          type="hidden"
+                          name="delete_saved_job"
+                          value="{{ savedjob.id }}"
+                        />
+                        <button type="submit" class="btn view-job" name="View Job">Delete</button>
+                      </form>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          
+            </div>
+         
+          </div>
+
+          
+        </div>
+      </section>
+<!-- job End -->
+    <!-- footer start -->
+
+
+    <script type="text/javascript" src={% static 'js/jquery.min.js' %}></script>
+    <script src={% static 'js/bootstrap.min.js' %}></script>
+    <script type="text/javascript" src={% static 'js/owl.carousel.min.js' %}></script>
+    <script src={% static 'js/bootsnav.js' %}></script>
+    <script src={% static 'js/main.js' %}></script>
   </body>
 </html>
