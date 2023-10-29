@@ -84,17 +84,18 @@ def workbench(request):
 
 
 @login_required
-def save_job(request, job_id):
+def save_job(request):
     if request.user.is_authenticated:
         # Retrieve the job using the job_id
-        title = request.POST.get(f'title_{job_id}')
-        link = request.POST.get(f'link_{job_id}')
-        
+        title = request.POST.get('title')
+        link = request.POST.get('link')
+        payment = request.POST.get('payment')
         # Save the job to the database for the authenticated user
         SavedJob.objects.create(
             user=request.user,
             title=title,
-            link=link
+            link=link,
+            payment=payment,
         )
         return JsonResponse({'message': 'Job saved successfully'})
 

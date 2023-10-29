@@ -18,6 +18,7 @@ class SavedJob(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     link = models.URLField()
+    payment = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title

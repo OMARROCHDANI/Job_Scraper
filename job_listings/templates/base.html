@@ -1,5 +1,5 @@
-{% load static %}
 
+{% load static %}
 <!DOCTYPE html>
 <html class="no-js" lang="en">
   <head>
@@ -25,8 +25,17 @@
   </head>
 
   <body>
-   
-    <!-- Navigation Start  -->
+    {% for message in messages %}
+<div
+  class="alert alert-{{ message.tags }} alert-dismissible fade show "
+  role="alert"
+>
+  <strong>Message:</strong> {{message}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span arial-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
 <nav class="navbar navbar-default navbar-sticky bootsnav">
   <div class="container">
     <!-- Start Header Navigation -->
@@ -86,9 +95,6 @@
   </div>
   {% endif %}
 </nav>
-<!-- Navigation End  -->
-
-
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <section
       class="main-banner"
