@@ -28,13 +28,13 @@ def signup(request):
             return redirect('/authentication/')
         if len(username) > 10:
             messages.error(request, 'Username must be under 10 characters')
-            return redirect('/authentication/')
+            return redirect('/signup/')
         if pass1 != pass2:
             messages.error(request, "Passwords didn't match")
-            return redirect('/authentication/')
+            return redirect('/signup/')
         if not username.isalnum():
             messages.error(request, "Username must be alphanumeric")
-            return redirect('/authentication/')
+            return redirect('/signup/')
 
         try:
             password_validation.validate_password(pass1, user=User(username=username))
