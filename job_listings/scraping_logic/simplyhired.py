@@ -30,7 +30,7 @@ def scrape_simplyhired(query, num_pages):
         driver.get(url)
 
         # Wait for some time to ensure the page is fully loaded (you might need to adjust this)
-        time.sleep(2)
+        
 
         # Scrape the current page
         jobs_simplyhired  = driver.find_elements(By.CLASS_NAME, "chakra-text.css-8rdtm5")

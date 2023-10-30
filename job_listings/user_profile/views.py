@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm
 from .models import Profile,SavedJob
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
 
 @login_required
@@ -20,13 +21,14 @@ def profile_create(request):
             profile = form.save(commit=False)
             profile.user = request.user
             profile.save()
-            # return redirect('profile_detail')
+            messages.success(request,'Profile Updated')
+            
                 # Check if a saved job needs to be deleted
         if 'delete_saved_job' in request.POST:
             job_id_to_delete = request.POST.get('delete_saved_job')
             saved_job_to_delete = get_object_or_404(SavedJob, id=job_id_to_delete)
             saved_job_to_delete.delete()
-
+            messages.success(request,'Job deleted')
     else:
         form = ProfileForm(instance=profile)
     savedjobs = SavedJob.objects.all()

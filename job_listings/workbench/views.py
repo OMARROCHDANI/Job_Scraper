@@ -21,14 +21,14 @@ from scraping_logic.simplyhired import scrape_simplyhired
 from scraping_logic.timesjobs import scrape_timesjobs
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
 
 import logging
 
 
 # Create your views here.
 def workbench(request):
-    user = request.user
-    profile = Profile.objects.get(user=user)
+    user = request.user  
     # Check if the data is already scraped
     if 'scraped_items_indeed' not in request.session and 'scraped_items_simplyhired' not in request.session and 'scraped_items_timesjobs' not in request.session:
         if request.method == 'POST':
@@ -36,9 +36,14 @@ def workbench(request):
             if search_option == 'manual':
                 myprofession = request.POST.get('input_profession')
             elif search_option == 'profile':
-                myprofession = profile.profession
-            items_indeed = scrape_indeed(myprofession, 1)
-            items_simplyhired = scrape_simplyhired(myprofession, 1)
+               try :
+                    profile = Profile.objects.get(user=user)
+                    myprofession = profile.profession
+               except Profile.DoesNotExist:
+                    messages.success(request,'you need to create a profile')      
+                    return redirect('/user_profile/') 
+            items_indeed = scrape_indeed(myprofession, 3)
+            items_simplyhired = scrape_simplyhired(myprofession, 3)
             items_timesjobs = scrape_timesjobs(myprofession)
             # Store the scraped data in the session
             request.session['scraped_items_indeed'] = items_indeed

@@ -28,13 +28,13 @@ def signup(request):
             return redirect('/authentication/')
         if len(username) > 10:
             messages.error(request, 'Username must be under 10 characters')
-            return redirect('/authentication/')
+            return redirect('/signup/')
         if pass1 != pass2:
             messages.error(request, "Passwords didn't match")
-            return redirect('/authentication/')
+            return redirect('/signup/')
         if not username.isalnum():
             messages.error(request, "Username must be alphanumeric")
-            return redirect('/authentication/')
+            return redirect('/signup/')
 
         try:
             password_validation.validate_password(pass1, user=User(username=username))
@@ -71,11 +71,11 @@ def signin(request):
 
         if user is not None:
             login(request, user)
-            fname = user.first_name
+            messages.success(request, 'signed in successfully')          
             return redirect('/authentication/authenticationindex/')
         else:
             messages.error(request, "Bad Credentials")
-            return redirect("/authentication/")
+            return redirect("/authentication/signin")
     return render(request, 'signin.html')
 
 
