@@ -49,6 +49,22 @@ def workbench(request):
             request.session['scraped_items_indeed'] = items_indeed
             request.session['scraped_items_simplyhired'] = items_simplyhired
             request.session['scraped_items_timesjobs'] = items_timesjobs
+            combined_items = list(zip(items_indeed, items_simplyhired))
+            paginator = Paginator(combined_items, 15)  # Show 10 items per page
+            page_number = request.GET.get('page', 1)
+            try:
+                paginated_items = paginator.page(page_number)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                paginated_items = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g., 9999), deliver last page of results.
+                paginated_items = paginator.page(paginator.num_pages)
+            context = {
+                'paginated_items': paginated_items,
+                'paginator': paginator,
+            }
+            return render(request, 'authenticationindex.html', context)
     else:
         if request.method == 'POST':
             search_option = request.POST.get('search_option')

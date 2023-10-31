@@ -2,12 +2,8 @@ from selenium import webdriver
 #Importer les modules requis :
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import time
 from selenium.common.exceptions import NoSuchElementException
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -30,7 +26,7 @@ def scrape_simplyhired(query, num_pages):
         driver.get(url)
 
         # Wait for some time to ensure the page is fully loaded (you might need to adjust this)
-        
+        time.sleep(2)
 
         # Scrape the current page
         jobs_simplyhired  = driver.find_elements(By.CLASS_NAME, "chakra-text.css-8rdtm5")
