@@ -107,7 +107,7 @@ def workbench(request):
 @login_required
 def save_job(request):
     if request.user.is_authenticated:
-        # Retrieve the job using the job_id
+        # Retrieve the job 
         title = request.POST.get('title')
         link = request.POST.get('link')
         payment = request.POST.get('payment')
